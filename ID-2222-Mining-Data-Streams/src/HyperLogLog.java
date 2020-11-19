@@ -1,3 +1,4 @@
+
 public class HyperLogLog {
 
     private final Long LARGE_PRIME =  948701839L;
@@ -50,20 +51,25 @@ public class HyperLogLog {
      */
 
 
-    public void add(int[] counter, int item){
+    public int[] add(int[] counter, int item){ //TROR DEN SKA RETURNERA COUNTER SÅ VI KAN ANVÄNDA I SIZE()
         int index = hash(item);
         //int clz = rho(index);
         int clz = Integer.numberOfLeadingZeros(index); //TODO: JAG TROR DEN FUNKAR
         if(clz > counter[index]) {
             counter[index] = clz;
         }
-
-
+        return counter;
     }
 
 
-    public void size( ){
-
+    public float size(int[] counter ){
+        float alpha;
+        float sum; //Z
+        for (int i : counter) {
+            sum += Math.pow(2, -i)
+        }
+        float result = alpha*Math.pow(counter.length, 2)*sum
+        return result;
     }
 
 
