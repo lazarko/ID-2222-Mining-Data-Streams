@@ -52,6 +52,27 @@ public class HyperLogLog {
         for (int i : counter) {
             sum += Math.pow(2, -i);
         }
+        double e =  Math.pow(sum, -1)*alpha*Math.pow(counter.length, 2);
+        if(e <= (5/2)*tail ){
+            int cnt = 0;
+            for(int i = 0; i < counter.length; i++){
+                if(counter[i] == 0){
+                    cnt++;
+                }
+            }
+            if(cnt != 0){
+                double tmp = tail/cnt;
+                System.out.println("HELLO" + tmp);
+                return tail*Math.log(tmp)/Math.log(2);
+            }else{
+                return e;
+            }
+
+        }else if(e <= (1/30) * Math.pow(2,32)){
+            return e;
+        }else if(e > (1/30) * Math.pow(2,32)){ //Knas här nere. Potentiellt fel här nere
+            return -Math.pow(2, 32)*(Math.log(1 - (e/Math.pow(2, 32))) / Math.log(2));
+        }
         return  Math.pow(sum, -1)*alpha*Math.pow(counter.length, 2);
     }
 
