@@ -2,7 +2,7 @@ public class HyperLogLog {
 
     private int[] counter;
     private int tail;
-    private double alpha = 0.673;
+    private double alpha;
     private int b;
 
 
@@ -13,7 +13,15 @@ public class HyperLogLog {
 
         tail = m;
         counter = new int[m];
-
+        if(m == 16){
+            alpha = 0.673;
+        }else if(m == 32){
+            alpha = 0.697;
+        }else if(m == 64){
+            alpha = 0.709;
+        }else if(m >= 128){
+            alpha = 0.7213/(1+ 1.079/m);
+        }
     }
 
 
@@ -25,36 +33,21 @@ public class HyperLogLog {
     }
 
     public int[] add(int item){
-        //String hashed = truncate(item);
         String hashed = truncate(item);
-        System.out.println("bin string " + hashed + " size " + hashed.length() );
+
         // ADDRESS BITS: FIRST B (4) BITS
-        String address_bits = hashed.substring(0,b);
+        String address_bits = hashed.substring(0,b-1);
         int index = Integer.parseInt(address_bits, 2) + 1;
         //REMAINING BITS TO GET LEADING ZEROS
         String remaining_bits = hashed.substring(b);
         int leading = remaining_bits.indexOf("1") + 1;
-        //IF THERE IS NO 1 IN THE STREAM, NUMBER OF LEADING ZEROS IS FULL LENGTH OF STREAM
-        if (leading == 0){
-            leading = remaining_bits.length() + 1;
-        }
-        //int index = 0;
-        for(int i = 0; i < hashed.length(); i++){
-            if(hashed.charAt(hashed.length()-1-i) == '1'){
-                index = i;
-            }
-        }
-        //int leading = (index + 1);
-        //int leading = hashed.indexOf("1") + 1;
-        System.out.println(leading);
-        if(leading > counter[index]) {
-            counter[index] = leading;
-        }
+
+        counter[index] = Math.max(index, leading);
         return counter;
     }
 
 
-    public double size(double alpha) {
+    public double size() {
         float sum = 0;
         for (int i : counter) {
             sum += Math.pow(2, -i);

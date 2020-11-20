@@ -1,34 +1,23 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Driver {
     //Constants
     private static final String filename = "web-Google.txt";
-    private static final double alpha = 0.673;
-    private static final int b = 4;
+    private static final int b = 10;
     public static void main(String[] args) throws FileNotFoundException {
-        //int m = (int) Math.pow(2, b);
         HyperLogLog hll = new HyperLogLog(b);
         ArrayList<Integer> inputStream = readFile();
 
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < inputStream.size(); i++){
             //System.out.println(Arrays.toString(hll.add(inputStream.get(i))));
             hll.add(inputStream.get(i));
-            //if((i % 1000) == 1){
-                //System.out.println(hll.size(alpha));
-            //}
+            if((i % 1000) == 1){
+                System.out.println(hll.size());
+            }
         }
-
-
-
-
-
-
-
 
 
     }
