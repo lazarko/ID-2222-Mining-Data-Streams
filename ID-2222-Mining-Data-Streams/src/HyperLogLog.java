@@ -1,7 +1,11 @@
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class HyperLogLog {
 
     private int[] counter;
-    private int tail;
+    private float tail;
     private double alpha;
     private int b;
 
@@ -28,32 +32,59 @@ public class HyperLogLog {
 
     private String truncate(int item){
         int hash = Integer.hashCode(item);
+        //System.out.println("hashCode" + hash);
         // HASHA TILL BINARY OCH SE TILL ATT STRÄNGEN ÄR LÄNGD TAIL (FN 16 BITS)
-        return String.format("%"+tail+"s", Integer.toBinaryString(hash)).replace(' ', '0');
+        String binary = Integer.toBinaryString(hash);
+        return binary;
+        //System.out.println("pre formatt binary" + binary);
+        //return String.format("%"+tail+"s", Integer.toBinaryString(hash)).replace(' ', '0');
+    }
+    private String hash(int x){
+        int hash = 3*x + 5 % 31;
+        return Integer.toBinaryString(hash);
     }
 
-    public int[] add(int item){
-        String hashed = truncate(item);
+    public int[] add(int[] counter, int item) throws NoSuchAlgorithmException {
+        //System.out.println("item: " + item);
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] byte_array = md.digest(Integer.toString(item).getBytes());
+        String hashed = "";
+        for (int i =0; i<byte_array.length; i++){
+            String bin = Integer.toBinaryString(byte_array[i]);
+            hashed += bin;
+        }
+        // ADDRESS BITS: FIRST B BITS
+        if (hashed.length() < b){
+            hashed = String.format("%"+tail+"s", hashed).replace(' ', '0');
+        }
+        System.out.println("hashed " + hashed);
+        String address_bits = hashed.substring(0,b);
 
-        // ADDRESS BITS: FIRST B (4) BITS
-        String address_bits = hashed.substring(0,b-1);
-        int index = Integer.parseInt(address_bits, 2) + 1;
+        int index = Integer.parseInt(address_bits, 2);
+        System.out.println("address: " + index);
         //REMAINING BITS TO GET LEADING ZEROS
         String remaining_bits = hashed.substring(b);
         int leading = remaining_bits.indexOf("1") + 1;
-
-        counter[index] = Math.max(index, leading);
+        if (leading == 0){
+            leading = counter.length+1;
+        }
+        System.out.println("leading: " + leading);
+        counter[index] = Math.max(counter[index], leading);
         return counter;
     }
 
 
     public double size() {
+        for (int count:counter) {
+            System.out.println(count);
+        }
         float sum = 0;
         for (int i : counter) {
             sum += Math.pow(2, -i);
         }
         double e =  Math.pow(sum, -1)*alpha*Math.pow(counter.length, 2);
-        if(e <= (5/2)*tail ){
+        System.out.println("e: " + e);
+        if(e <= (5.0/2.0)*tail ){
             int cnt = 0;
             for(int i = 0; i < counter.length; i++){
                 if(counter[i] == 0){
@@ -68,9 +99,9 @@ public class HyperLogLog {
                 return e;
             }
 
-        }else if(e <= (1/30) * Math.pow(2,32)){
+        }else if(e <= (1.0/30.0) * Math.pow(2,32)){
             return e;
-        }else if(e > (1/30) * Math.pow(2,32)){ //Knas här nere. Potentiellt fel här nere
+        }else if(e > (1.0/30.0) * Math.pow(2,32)){ //Knas här nere. Potentiellt fel här nere
             return -Math.pow(2, 32)*(Math.log(1 - (e/Math.pow(2, 32))) / Math.log(2));
         }
         return  Math.pow(sum, -1)*alpha*Math.pow(counter.length, 2);

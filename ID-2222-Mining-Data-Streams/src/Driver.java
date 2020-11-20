@@ -1,19 +1,22 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.security.MessageDigest;
 
 public class Driver {
     //Constants
     private static final String filename = "web-Google.txt";
     private static final int b = 4;
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, NoSuchAlgorithmException {
         HyperLogLog hll = new HyperLogLog(b);
         ArrayList<Integer> inputStream = readFile();
+        int[] counter = new int[(int)Math.pow(2,b)];
         for(int i = 0; i < inputStream.size(); i++){
             //System.out.println(Arrays.toString(hll.add(inputStream.get(i))));
-            hll.add(inputStream.get(i));
+            hll.add(counter, inputStream.get(i));
             //if((i % 1000) == 1){
                 //System.out.println(hll.size());
             //}
