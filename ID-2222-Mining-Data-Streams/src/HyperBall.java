@@ -12,7 +12,7 @@ public class HyperBall{
         //Arrays.fill(change_log, true );
         int counter_size = (int) Math.pow(2, b_val);
         counters = new int[graph.size()][counter_size];
-        HyperLogLog hll = new HyperLogLog(5);
+        HyperLogLog hll = new HyperLogLog(4);
         for (int v:graph.keySet()) { //pseudocode line 8-10
             counters[v] = hll.add(counters[v], v);
         }

@@ -16,12 +16,12 @@ public class Driver {
         int[] counter = new int[(int)Math.pow(2,b)];
         for(int i = 0; i < inputStream.size(); i++){
             //System.out.println(Arrays.toString(hll.add(inputStream.get(i))));
-            hll.add(counter, inputStream.get(i));
+            counter = hll.add(counter, inputStream.get(i));
             //if((i % 1000) == 1){
                 //System.out.println(hll.size());
             //}
         }
-        System.out.println(hll.size());
+        System.out.println(hll.size(counter));
 
 
     }

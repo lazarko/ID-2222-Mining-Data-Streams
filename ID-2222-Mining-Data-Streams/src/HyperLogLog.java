@@ -4,8 +4,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class HyperLogLog {
 
-    private int[] counter;
-    private float tail;
+    //private int[] counter;
+    private int tail;
     private double alpha;
     private int b;
 
@@ -16,7 +16,7 @@ public class HyperLogLog {
         int m = (int) Math.pow(2, b);
 
         tail = m;
-        counter = new int[m];
+        //counter = new int[m];
         if(m == 16){
             alpha = 0.673;
         }else if(m == 32){
@@ -39,25 +39,37 @@ public class HyperLogLog {
         //System.out.println("pre formatt binary" + binary);
         //return String.format("%"+tail+"s", Integer.toBinaryString(hash)).replace(' ', '0');
     }
-    private String hash(int x){
+    private String hash(int x) throws NoSuchAlgorithmException {
         int hash = 3*x + 5 % 31;
-        return Integer.toBinaryString(hash);
+        //int hash = Integer.hashCode(x);
+
+        String binary = Integer.toBinaryString(hash);
+        //System.out.println("binary " + binary);
+        if (binary.length() < tail){
+            int len = tail - binary.length();
+            String pad = String.format("%0"+len+"d",0);
+            String result = pad + binary;
+            return result;
+        }
+        //return String.format("%"+tail+"s",Integer.toBinaryString(hash)).replace(' ', '0');
+        return binary;
     }
 
     public int[] add(int[] counter, int item) throws NoSuchAlgorithmException {
         //System.out.println("item: " + item);
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] byte_array = md.digest(Integer.toString(item).getBytes());
-        String hashed = "";
-        for (int i =0; i<byte_array.length; i++){
+        //MessageDigest md = MessageDigest.getInstance("SHA-1");
+        //byte[] byte_array = md.digest(Integer.toString(item).getBytes());
+        //String hashed = "";
+        /*for (int i =0; i<byte_array.length; i++){
             String bin = Integer.toBinaryString(byte_array[i]);
             hashed += bin;
-        }
+        }*/
         // ADDRESS BITS: FIRST B BITS
-        if (hashed.length() < b){
+        /*if (hashed.length() < b){
             hashed = String.format("%"+tail+"s", hashed).replace(' ', '0');
-        }
-        System.out.println("hashed " + hashed);
+        }*/
+        String hashed = hash(item);
+        System.out.println("hashed " + hashed + " size: " + hashed.length());
         String address_bits = hashed.substring(0,b);
 
         int index = Integer.parseInt(address_bits, 2);
@@ -65,16 +77,15 @@ public class HyperLogLog {
         //REMAINING BITS TO GET LEADING ZEROS
         String remaining_bits = hashed.substring(b);
         int leading = remaining_bits.indexOf("1") + 1;
-        if (leading == 0){
-            leading = counter.length+1;
-        }
+
         System.out.println("leading: " + leading);
         counter[index] = Math.max(counter[index], leading);
+
         return counter;
     }
 
 
-    public double size() {
+    public double size(int[] counter) {
         for (int count:counter) {
             System.out.println(count);
         }
