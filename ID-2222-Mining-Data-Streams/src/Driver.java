@@ -10,6 +10,7 @@ public class Driver {
     //Constants
     private static final String filename = "web-Google.txt";
     private static final int b = 4;
+
     public static void main(String[] args) throws FileNotFoundException, NoSuchAlgorithmException {
         HyperLogLog hll = new HyperLogLog(b);
         ArrayList<Integer> inputStream = readFile();
@@ -17,11 +18,12 @@ public class Driver {
         for(int i = 0; i < inputStream.size(); i++){
             //System.out.println(Arrays.toString(hll.add(inputStream.get(i))));
             counter = hll.add(counter, inputStream.get(i));
-            //if((i % 1000) == 1){
-                //System.out.println(hll.size());
-            //}
+            if((i % 1000) == 1){
+                //hll.size(counter);
+                System.out.println("Estimation: " + hll.size(counter));
+            }
+
         }
-        System.out.println(hll.size(counter));
 
 
     }
