@@ -13,10 +13,11 @@ public class HyperBall{
         Arrays.fill(did_not_change, false); //sätt default av did not change till false
         int counter_size = (int) Math.pow(2, b_val);
         counters = new int[graph.size()][counter_size];
-        HyperLogLog hll = new HyperLogLog(4);
-        for (int v:graph.keySet()) { //pseudocode line 8-10
-            counters[v] = hll.add(counters[v], v);
+        HyperLogLog hll = new HyperLogLog(b_val);
+        for(int i = 0; i < graph.size(); i++){
+            counters[i] = hll.add(counters[i], i);
         }
+
         int t = 0;
         while (Arrays.asList(did_not_change).contains(false)){
 

@@ -37,8 +37,7 @@ public class HyperLogLog {
         byte[] messageDigest = md.digest(itemString.getBytes());
         BigInteger no = new BigInteger(1, messageDigest);
         String hashtext = no.toString(2);
-        return hashtext.substring(10, 42);
-        // Add preceding 0s to make it 32 bit
+        return hashtext.substring(68, 100);
 
     }
 

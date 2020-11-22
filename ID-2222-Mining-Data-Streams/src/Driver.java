@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 
 public class Driver {
     //Constants
-    private static final String filename = "CA-HepTh.txt";
+    private static final String filename = "web-Google.txt";
     private static final int b = 4;
     public static HashMap<Integer, ArrayList<Integer>> graph = new HashMap<>(); //hashmap of nodes and their edges.
 
@@ -20,11 +20,14 @@ public class Driver {
         for(int i = 0; i < inputStream.size(); i++){
 
             counter = hll.add(counter, inputStream.get(i));
+            if(i % 1000 == 1){
+                System.out.println(hll.size(counter));
+            }
 
         }
-        System.out.println(hll.size(counter));
 
-        HyperBall hb = new HyperBall(graph, b); //anropar och utför hyperball operationen
+
+        //HyperBall hb = new HyperBall(graph, b); //anropar och utför hyperball operationen
 
 
     }
@@ -62,7 +65,7 @@ public class Driver {
                 graph.put(node, list);
             }
         }
-        graph.entrySet().forEach(entry -> System.out.println(entry.getKey() + "-->" + entry.getValue()));
+        //graph.entrySet().forEach(entry -> System.out.println(entry.getKey() + "-->" + entry.getValue()));
 
 
         sc.close();
