@@ -37,7 +37,8 @@ public class HyperBall{
                 double ball_cv = hll.size(counters.get(v));
                 if (t > 0) {
                     double harmonic_centrality = (1 / t) * (ball_a - ball_cv);
-                    centralities.put(v, harmonic_centrality);
+                    centralities.put(v, centralities.get(v) + harmonic_centrality);
+                    //iterative sum of centrality of each node at t
                 }
                 if (Arrays.equals(counters.get(v), nodeAndCounter.get(v))){
                     did_not_change.add(true);
