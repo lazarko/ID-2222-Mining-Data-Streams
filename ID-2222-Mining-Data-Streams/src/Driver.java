@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 
 public class Driver {
     //Constants
-    private static final String filename = "web-Google.txt";
+    private static final String filename = "CA-HepTh.txt";
     private static final int b = 4;
     private static HashMap<Integer, ArrayList<Integer>> graph = new HashMap<>(); //hashmap of nodes and their edges.
 

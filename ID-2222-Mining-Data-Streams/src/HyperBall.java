@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class HyperBall{
-    public HashMap<Integer, int[]> counters;
+    public HashMap<Integer, int[]> counters = new HashMap<>();
     private HashMap<Integer, int[]> nodeAndCounter = new HashMap<>();
-    private ArrayList<Boolean> did_not_change;
-    private HashMap<Integer, Double> centralities;
+    private ArrayList<Boolean> did_not_change ;
+    private HashMap<Integer, Double> centralities = new HashMap<>();
 
     public HyperBall(HashMap<Integer, ArrayList<Integer>> graph, int b_val) throws NoSuchAlgorithmException, DigestException {
         did_not_change = new ArrayList<>();
@@ -31,6 +31,7 @@ public class HyperBall{
             for (int v : graph.keySet()) {
                 int[] a = counters.get(v);
                 for (int w : graph.get(v)) {
+                    int [] next = counters.get(w);
                     a = union(counters.get(w), a);
                 }
                 double ball_a = hll.size(a); //size of coreachable set of x
@@ -38,6 +39,7 @@ public class HyperBall{
                 if (t > 0) {
                     double harmonic_centrality = (1 / t) * (ball_a - ball_cv);
                     centralities.put(v, centralities.get(v) + harmonic_centrality);
+
                     //iterative sum of centrality of each node at t
                 }
                 if (Arrays.equals(counters.get(v), nodeAndCounter.get(v))){
@@ -49,7 +51,9 @@ public class HyperBall{
                 nodeAndCounter.put(v, a);
             }
             t++;
+            System.out.println(t);
         }while(did_not_change.contains(false));
+        centralities.entrySet().forEach(entry -> System.out.println(entry.getKey() + " > " +entry.getValue()));
         //returnera någon centrality
     }
 
@@ -87,7 +91,8 @@ public class HyperBall{
     }*/
 
     public int[] union(int[] counter1, int[] counter2){ //Pseudocode line 2-6
-        for (int i:counter1) {
+
+        for (int i = 0; i < counter1.length; i++) {
             counter1[i] = Math.max(counter1[i], counter2[i]);
         }
         return counter1;
