@@ -8,11 +8,11 @@ import java.util.HashMap;
 public class HyperBall{
     public HashMap<Integer, int[]> counters = new HashMap<>();
     private HashMap<Integer, int[]> nodeAndCounter = new HashMap<>();
-    private ArrayList<Boolean> did_not_change ;
+   // private ArrayList<Boolean> did_not_change ;
     private HashMap<Integer, Double> centralities = new HashMap<>();
 
     public HyperBall(HashMap<Integer, ArrayList<Integer>> graph, int b_val) throws NoSuchAlgorithmException, DigestException {
-        did_not_change = new ArrayList<>();
+        //did_not_change = new ArrayList<>();
         //Arrays.fill(did_not_change, false); //sätt default av did not change till false
         int counter_size = (int) Math.pow(2, b_val);
         //counters = new int[graph.size()][counter_size];
@@ -25,36 +25,46 @@ public class HyperBall{
             centralities.put(v, 0.0); //initialize centrality counter
         }
         int t = 0;
-        //boolean has_changed = true;
-
+        boolean has_changed = false;
+        double maxcentrality = 0;
+        int node = 0;
         do {
+            boolean s = false;
             for (int v : graph.keySet()) {
                 int[] a = counters.get(v);
                 for (int w : graph.get(v)) {
-                    int [] next = counters.get(w);
                     a = union(counters.get(w), a);
                 }
                 double ball_a = hll.size(a); //size of coreachable set of x
                 double ball_cv = hll.size(counters.get(v));
                 if (t > 0) {
                     double harmonic_centrality = (1 / t) * (ball_a - ball_cv);
-                    centralities.put(v, centralities.get(v) + harmonic_centrality);
+                    if(harmonic_centrality == 0.0 ){
+                        has_changed = true;
+                    }else{
+                        if(harmonic_centrality > maxcentrality){
+                            maxcentrality = harmonic_centrality;
+                            node = v;
+
+                        }
+                        centralities.put(v, centralities.get(v) + harmonic_centrality);
+                        //System.out.println("Centrality " + harmonic_centrality + " , Node: " + v);
+                    }
 
                     //iterative sum of centrality of each node at t
                 }
                 if (Arrays.equals(counters.get(v), nodeAndCounter.get(v))){
-                    did_not_change.add(true);
-                }
-                else{
-                    did_not_change.add(false);
+                    s = true;
                 }
                 nodeAndCounter.put(v, a);
             }
+
+
             t++;
-            System.out.println(t);
-        }while(did_not_change.contains(false));
-        centralities.entrySet().forEach(entry -> System.out.println(entry.getKey() + " > " +entry.getValue()));
+        }while(!has_changed);
+        //centralities.entrySet().forEach(entry -> System.out.println(entry.getKey() + " > " + entry.getValue()));
         //returnera någon centrality
+        System.out.println("Centrality: " + maxcentrality  + " of node: " + node);
     }
 
 
