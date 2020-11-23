@@ -11,23 +11,21 @@ public class Driver {
     //Constants
     private static final String filename = "web-Google.txt";
     private static final int b = 4;
-    public static HashMap<Integer, ArrayList<Integer>> graph = new HashMap<>(); //hashmap of nodes and their edges.
+    private static HashMap<Integer, ArrayList<Integer>> graph = new HashMap<>(); //hashmap of nodes and their edges.
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchAlgorithmException, DigestException {
-        HyperLogLog hll = new HyperLogLog(b);
+        //HyperLogLog hll = new HyperLogLog(b);
         ArrayList<Integer> inputStream = readFile();
         int[] counter = new int[(int)Math.pow(2,b)];
+        /*
         for(int i = 0; i < inputStream.size(); i++){
-
             counter = hll.add(counter, inputStream.get(i));
-            if(i % 1000 == 1){
+            if(i % 100000 == 1){
                 System.out.println(hll.size(counter));
             }
-
         }
-
-
-        //HyperBall hb = new HyperBall(graph, b); //anropar och utför hyperball operationen
+         */
+        new HyperBall(graph, b); //anropar och utför hyperball operationen
 
 
     }
@@ -66,7 +64,6 @@ public class Driver {
             }
         }
         //graph.entrySet().forEach(entry -> System.out.println(entry.getKey() + "-->" + entry.getValue()));
-
 
         sc.close();
         return inputFile;
