@@ -49,7 +49,7 @@ public class HyperBall{
             t++;
         }
 
-        int reciprocal = sumUp()
+
 
 
         /**
