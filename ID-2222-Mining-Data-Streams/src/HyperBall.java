@@ -37,7 +37,6 @@ public class HyperBall{
 
 
         int t = 0;
-        boolean has_changed = true;
 
         while(true){
             for(int v : graph.keySet()){
@@ -46,14 +45,11 @@ public class HyperBall{
                     a = union(counters[w], a);
                 }
                 nodeAndCounter.put(v, a);
-
-
             }
-            
-
-
             t++;
         }
+
+        int reciprocal = sumUp()
 
 
         /**
