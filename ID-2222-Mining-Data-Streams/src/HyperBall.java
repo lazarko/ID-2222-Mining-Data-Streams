@@ -8,36 +8,49 @@ import java.util.HashMap;
 public class HyperBall{
     public HashMap<Integer, int[]> counters;
     private HashMap<Integer, int[]> nodeAndCounter = new HashMap<>();
-    private boolean[] did_not_change;
+    private ArrayList<Boolean> did_not_change;
+    private HashMap<Integer, Double> centralities;
+
     public HyperBall(HashMap<Integer, ArrayList<Integer>> graph, int b_val) throws NoSuchAlgorithmException, DigestException {
-        did_not_change = new boolean[graph.size()];
-        Arrays.fill(did_not_change, false); //sätt default av did not change till false
+        did_not_change = new ArrayList<>();
+        //Arrays.fill(did_not_change, false); //sätt default av did not change till false
         int counter_size = (int) Math.pow(2, b_val);
         //counters = new int[graph.size()][counter_size];
         HyperLogLog hll = new HyperLogLog(4);
-        for (int v:graph.keySet()) { //pseudocode line 8-10
+        for (int v : graph.keySet()) { //pseudocode line 8-10
             int[] new_counter = new int[counter_size];
-            int [] counter = hll.add(new_counter, v);
-            counters.put(v, counter);
+            int[] counter = hll.add(new_counter, v);
+            counters.put(v, counter); //gets changed
+            nodeAndCounter.put(v, counter); //keeps track of counter from past iteration
+            centralities.put(v, 0.0); //initialize centrality counter
         }
         int t = 0;
-        boolean has_changed = true;
+        //boolean has_changed = true;
 
-        while(true){
-            for(int v : graph.keySet()){
-                int[] a = counters[v];
-                for (int w : graph.get(v)){
-                    a = union(counters[w], a);
+        do {
+            for (int v : graph.keySet()) {
+                int[] a = counters.get(v);
+                for (int w : graph.get(v)) {
+                    a = union(counters.get(w), a);
+                }
+                double ball_a = hll.size(a); //size of coreachable set of x
+                double ball_cv = hll.size(counters.get(v));
+                if (t > 0) {
+                    double harmonic_centrality = (1 / t) * (ball_a - ball_cv);
+                    centralities.put(v, harmonic_centrality);
+                }
+                if (Arrays.equals(counters.get(v), nodeAndCounter.get(v))){
+                    did_not_change.add(true);
+                }
+                else{
+                    did_not_change.add(false);
                 }
                 nodeAndCounter.put(v, a);
-
-
             }
-            
-
-
             t++;
-        }
+        }while(did_not_change.contains(false));
+        //returnera någon centrality
+    }
 
 
         /**
@@ -70,7 +83,7 @@ public class HyperBall{
             t++;
         }
 
-    }
+    }*/
 
     public int[] union(int[] counter1, int[] counter2){ //Pseudocode line 2-6
         for (int i:counter1) {
